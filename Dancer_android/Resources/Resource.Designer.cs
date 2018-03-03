@@ -51,10 +51,22 @@ namespace Dancer_android
 			public const int btnPlay = 2130837505;
 			
 			// aapt resource value: 0x7f020002
-			public const int logo = 2130837506;
+			public const int cycle = 2130837506;
 			
 			// aapt resource value: 0x7f020003
-			public const int progressbar = 2130837507;
+			public const int logo = 2130837507;
+			
+			// aapt resource value: 0x7f020004
+			public const int menu = 2130837508;
+			
+			// aapt resource value: 0x7f020005
+			public const int Pause = 2130837509;
+			
+			// aapt resource value: 0x7f020006
+			public const int progressbar = 2130837510;
+			
+			// aapt resource value: 0x7f020007
+			public const int random = 2130837511;
 			
 			static Drawable()
 			{

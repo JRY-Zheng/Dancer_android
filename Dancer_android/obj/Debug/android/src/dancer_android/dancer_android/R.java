@@ -13,8 +13,12 @@ public final class R {
     public static final class drawable {
         public static final int background=0x7f020000;
         public static final int btnplay=0x7f020001;
-        public static final int logo=0x7f020002;
-        public static final int progressbar=0x7f020003;
+        public static final int cycle=0x7f020002;
+        public static final int logo=0x7f020003;
+        public static final int menu=0x7f020004;
+        public static final int pause=0x7f020005;
+        public static final int progressbar=0x7f020006;
+        public static final int random=0x7f020007;
     }
     public static final class id {
         public static final int btnMenu=0x7f05000d;

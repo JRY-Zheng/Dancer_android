@@ -8,6 +8,8 @@ using Android.Net;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System;
+using Android.Runtime;
+using Android.Content;
 
 namespace Dancer_android
 {
@@ -15,7 +17,7 @@ namespace Dancer_android
     public class MainActivity : Activity
     {
         public string cur_music_name, cur_singer;
-        private Button btnPlay, btnMenu, btnMode;
+        private ImageButton btnPlay, btnMenu, btnMode;
         private TextView txtTitle;
         private MediaPlayer player;
         private string musicRootPath; private struct Music
@@ -47,8 +49,8 @@ namespace Dancer_android
         private TextView[] txtLyrics = new TextView[9];
         private ProgressBar playProgress;
         private int curLine = 0;
-
-        int curSong = 1;
+        private bool curMode = true;  // true means random
+        private static PowerManager.WakeLock wakeLock;  
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -57,11 +59,11 @@ namespace Dancer_android
             InitMysql(ref mysqlConnector);
             LoadMusic();
             SetContentView(Resource.Layout.Main);
-            btnPlay = FindViewById<Button>(Resource.Id.btnPlay);
+            btnPlay = FindViewById<ImageButton>(Resource.Id.btnPlay);
             btnPlay.Click += BtnPlay_Click;
-            btnMode = FindViewById<Button>(Resource.Id.btnMode);
+            btnMode = FindViewById<ImageButton>(Resource.Id.btnMode);
             btnMode.Click += BtnMode_Click;
-            btnMenu = FindViewById<Button>(Resource.Id.btnMenu);
+            btnMenu = FindViewById<ImageButton>(Resource.Id.btnMenu);
             btnMenu.Click += BtnMenu_Click;
             txtTitle = FindViewById<TextView>(Resource.Id.musicTitle);
             playProgress = FindViewById<ProgressBar>(Resource.Id.playProgress);
@@ -82,7 +84,7 @@ namespace Dancer_android
 
         private void InitMysql(ref MysqlConnector m)
         {
-            m.Init("mysql server ip", "catalog", "user id", "password", "port");
+            m.Init("47.92.75.9", "dancer", "root", "luoyuan119026", "8783");
         }
         //单曲循环
         private string cycleMusicName = "", cycleSinger = "";
@@ -191,11 +193,10 @@ namespace Dancer_android
                 curLine = 0;
             }
             else lyric.Clear();
-            StartUpdateLyric(10, () => player.CurrentPosition < player.Duration - 1);
+            StartUpdateLyric(10, () => player.CurrentPosition < player.Duration - 1, new Handler(Looper.MainLooper));
         }
-        private void StartUpdateLyric(long totalMilliseconds, Func<bool> callback)
+        private void StartUpdateLyric(long totalMilliseconds, Func<bool> callback, Handler refreshLyric)
         {
-            refreshLyric = new Handler(Looper.MainLooper);
             refreshLyric.PostDelayed(() =>
             {
                 playProgress.Progress = player.CurrentPosition * 100 / player.Duration;
@@ -206,9 +207,9 @@ namespace Dancer_android
                     else txtLyrics[8].Text = "";
                     curLine++;
                 }
-                if (callback()) StartUpdateLyric(totalMilliseconds, callback);
-                refreshLyric.Dispose();
-                refreshLyric = null;
+                if (callback()) StartUpdateLyric(totalMilliseconds, callback, refreshLyric);
+                //refreshLyric.Dispose();
+                //refreshLyric = null;
             }, totalMilliseconds);
         }
         //加载音乐
@@ -276,7 +277,11 @@ namespace Dancer_android
         private void BtnMenu_Click(object sender, System.EventArgs e)
         {
             //throw new System.NotImplementedException();
-            if (directClose) this.Finish();
+            if (directClose)
+            {
+                player.Stop();
+                this.Finish();
+            }
             else
             {
                 directClose = true;
@@ -287,17 +292,42 @@ namespace Dancer_android
         private void BtnMode_Click(object sender, System.EventArgs e)
         {
             //throw new System.NotImplementedException();
-            btnMode.Text = btnMode.Text == "∝" ? "¹" : "∝";
+            /*btnMode.Text = btnMode.Text == "∝" ? "¹" : "∝";
             if (btnMode.Text == "∝") CheckSong("");
-            else btnMode.Text = CheckSong(cur_music_name + " " + cur_singer)== 0 ? "¹": "∝";
+            else btnMode.Text = CheckSong(cur_music_name + " " + cur_singer)== 0 ? "¹": "∝";*/
+            if (curMode)
+                btnMode.SetImageResource(Resource.Drawable.cycle);
+            else
+                btnMode.SetImageResource(Resource.Drawable.random);
+            curMode = !curMode;
+            if (curMode) CheckSong("");
+            else if (CheckSong(cur_music_name + " " + cur_singer) < 0)
+            {
+                btnMode.SetImageResource(Resource.Drawable.random);
+                curMode = true;
+            }
         }
 
         private void BtnPlay_Click(object sender, System.EventArgs e)
         {
             //throw new System.NotImplementedException();
-            btnPlay.Text = player.IsPlaying ? " ▷" : "∥";
+            //btnPlay.Text = player.IsPlaying ? " ▷" : "∥";
+            if (player.IsPlaying)
+                btnPlay.SetImageResource(Resource.Drawable.logo);
+            else
+                btnPlay.SetImageResource(Resource.Drawable.Pause);
             if (player.IsPlaying) player.Pause();
             else player.Start();
+        }
+
+        public override bool OnKeyDown([GeneratedEnum] Keycode keyCode, KeyEvent e)
+        {
+            if (keyCode == Keycode.Back)
+            {
+                MoveTaskToBack(false);
+                return true;
+            }
+            return base.OnKeyDown(keyCode, e);
         }
     }
 }

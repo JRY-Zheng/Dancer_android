@@ -17,6 +17,10 @@ E:\大学\飞行器设计\C#\Dancer_android\Dancer_android\obj\Debug\res\drawabl
 E:\大学\飞行器设计\C#\Dancer_android\Dancer_android\obj\Debug\res\drawable\btnplay.xml
 E:\大学\飞行器设计\C#\Dancer_android\Dancer_android\obj\Debug\res\drawable\logo.png
 E:\大学\飞行器设计\C#\Dancer_android\Dancer_android\obj\Debug\res\drawable\progressbar.xml
+E:\大学\飞行器设计\C#\Dancer_android\Dancer_android\obj\Debug\res\drawable\pause.png
+E:\大学\飞行器设计\C#\Dancer_android\Dancer_android\obj\Debug\res\drawable\cycle.png
+E:\大学\飞行器设计\C#\Dancer_android\Dancer_android\obj\Debug\res\drawable\menu.png
+E:\大学\飞行器设计\C#\Dancer_android\Dancer_android\obj\Debug\res\drawable\random.png
 E:\大学\飞行器设计\C#\Dancer_android\Dancer_android\bin\Debug\Dancer_android.dll
 bin\Debug\Mono.Android.pdb
 bin\Debug\mscorlib.pdb

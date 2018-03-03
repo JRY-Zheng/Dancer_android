@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">Dancer</string>
-  <string name="music_root_path">/storage/emulated/0/歌单/</string>
+  <string name="music_root_path">/storage/emulated/0/Music/</string>
   <string name="default_lyric">暂无歌曲</string>
 </resources>
