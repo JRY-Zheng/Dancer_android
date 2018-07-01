@@ -115,6 +115,67 @@
             android:textColor="#AAFFFFFF"
             android:gravity="center"
             android:textAlignment="center" />
+      <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.5"
+        android:background="#AAFFFFFF"
+        android:visibility="gone"
+        android:id="@+id/searchBox">
+      <LinearLayout
+        android:orientation="vertical"
+        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="0.7"
+        android:background="#00000000"
+          android:gravity="center"
+        android:id="@+id/searchInputBox"
+        android:paddingLeft="20dp">
+        <EditText
+          android:hint="@string/search_box"
+          android:layout_height="wrap_content"
+          android:layout_width="match_parent"
+          android:id="@+id/searchEditBox"
+          android:textSize="18dp"
+          android:textColor="#AA000000"
+          android:background="#00000000"
+          android:textAlignment="textStart"
+        android:foreground="#CCFFFFFF"/></LinearLayout>
+        <Button
+          android:text="@string/search"
+          android:layout_height="match_parent"
+          android:layout_width="0dp"
+          android:layout_weight="0.3"
+          android:id="@+id/searchButton"
+          android:background="#CCFFFFFF"
+          android:textSize="18dp"
+          android:textColor="#FF11FF44"
+          android:gravity="center"
+          android:textAlignment="center"
+      android:layout_gravity="center"
+      android:padding="10dp"/>
+      </LinearLayout>      
+      <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.5"
+        android:background="#AAFFFFFF"
+        android:visibility="gone"
+        android:id="@+id/exitBox">
+        <Button
+          android:text="@string/exit"
+          android:layout_height="match_parent"
+          android:layout_width="0dp"
+          android:layout_weight="1"
+          android:id="@+id/exitButton"
+          android:background="#CCFF1144"
+          android:textSize="18dp"
+          android:textColor="#AAFFFFFF"
+          android:gravity="center"
+          android:textAlignment="center"/>      
+      </LinearLayout>
         <TextView
             android:text="singer-music"
             android:layout_width="match_parent"

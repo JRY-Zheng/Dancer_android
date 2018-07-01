@@ -1,1 +1,1 @@
-<resources><string name="app_name">Dancer</string><string name="music_root_path">/storage/emulated/0/Music/</string><string name="default_lyric">暂无歌曲</string></resources>
+<resources><string name="app_name">Dancer</string><string name="music_root_path">/storage/emulated/0/Music/</string><string name="default_lyric">暂无歌曲</string><string name="search_box">模糊搜索</string><string name="search">〇</string><string name="exit">退出</string></resources>

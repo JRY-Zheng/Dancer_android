@@ -17,6 +17,9 @@ namespace Dancer_android
     public class MainActivity : Activity
     {
         public string cur_music_name, cur_singer;
+        private LinearLayout searchBox, exitBox;
+        private EditText searchEditBox;
+        private Button searchButton, exitButton;
         private ImageButton btnPlay, btnMenu, btnMode;
         private TextView txtTitle;
         private MediaPlayer player;
@@ -59,6 +62,14 @@ namespace Dancer_android
             InitMysql(ref mysqlConnector);
             LoadMusic();
             SetContentView(Resource.Layout.Main);
+            searchBox = FindViewById<LinearLayout>(Resource.Id.searchBox);
+            exitBox = FindViewById<LinearLayout>(Resource.Id.exitBox);
+            searchEditBox = FindViewById<EditText>(Resource.Id.searchEditBox);
+            searchButton = FindViewById<Button>(Resource.Id.searchButton);
+            searchButton.Click += SearchButton_Click;
+            searchEditBox.AfterTextChanged += SearchEditBox_AfterTextChanged;
+            exitButton = FindViewById<Button>(Resource.Id.exitButton);
+            exitButton.Click += ExitButton_Click;
             btnPlay = FindViewById<ImageButton>(Resource.Id.btnPlay);
             btnPlay.Click += BtnPlay_Click;
             btnMode = FindViewById<ImageButton>(Resource.Id.btnMode);
@@ -81,7 +92,7 @@ namespace Dancer_android
             player.Completion += Player_Completion;
             PlayNewSong();
         }
-
+        
         private void InitMysql(ref MysqlConnector m)
         {
             m.Init("47.92.75.9", "dancer", "root", "luoyuan119026", "8783");
@@ -90,40 +101,67 @@ namespace Dancer_android
         private string cycleMusicName = "", cycleSinger = "";
         public int CheckSong(string songInfo)
         {
-            string music_name, singer;
-            Match match = Regex.Match(songInfo, @"^(.+?)(\s(.+))?$");
+            string param1, param2;
+            bool exist = false;
+            Match match = Regex.Match(songInfo, @"(\S+)\s?(\S*)");
             if (match.Success)
             {
-                music_name = match.Groups[1].ToString();
-                if (match.Groups.Count > 3 && match.Groups[3].ToString() != "")
+                param1 = match.Groups[1].ToString();
+                param2 = match.Groups[2].ToString();
+                mysqlConnector.ifExist(ref exist, param1, param2);
+                if (exist)
                 {
-                    singer = match.Groups[3].ToString();
-                    List<Music> find_music_list = musicPath.FindAll(name => { return name.musicName == music_name && name.singer == singer; });
-                    if (find_music_list.ToArray().Length == 0) return -1;
-                    else
-                    {
-                        cycleMusicName = music_name;
-                        cycleSinger = singer;
-                    }
+                    cycleMusicName = param1;
+                    cycleSinger = param2;
+                    return 0;
                 }
                 else
                 {
-                    List<Music> find_music_list = musicPath.FindAll(name => { return name.musicName == music_name; });
-                    if (find_music_list.ToArray().Length == 0) return -1;
-                    else
-                    {
-                        cycleMusicName = music_name;
-                        cycleSinger = "";
-                    }
+                    cycleMusicName = "";
+                    cycleSinger = "";
+                    return -1;
                 }
             }
             else
             {
-                cycleSinger = "";
                 cycleMusicName = "";
-                if (songInfo == "") return 1;
-                else return -1;
-            }
+                cycleSinger = "";
+                return 1;
+            };
+            //string music_name, singer;
+            //Match match = Regex.Match(songInfo, @"^(.+?)(\s(.+))?$");
+            //if (match.Success)
+            //{
+            //    music_name = match.Groups[1].ToString();
+            //    if (match.Groups.Count > 3 && match.Groups[3].ToString() != "")
+            //    {
+            //        singer = match.Groups[3].ToString();
+            //        List<Music> find_music_list = musicPath.FindAll(name => { return name.musicName == music_name && name.singer == singer; });
+            //        if (find_music_list.ToArray().Length == 0) return -1;
+            //        else
+            //        {
+            //            cycleMusicName = music_name;
+            //            cycleSinger = singer;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        List<Music> find_music_list = musicPath.FindAll(name => { return name.musicName == music_name; });
+            //        if (find_music_list.ToArray().Length == 0) return -1;
+            //        else
+            //        {
+            //            cycleMusicName = music_name;
+            //            cycleSinger = "";
+            //        }
+            //    }
+            //}
+            //else
+            //{
+            //    cycleSinger = "";
+            //    cycleMusicName = "";
+            //    if (songInfo == "") return 1;
+            //    else return -1;
+            //}
             return 0;
         }
         //自动播放下一曲
@@ -154,10 +192,11 @@ namespace Dancer_android
             LyricReader.Init(finded_music.fileName, finded_music.belongToList, musicRootPath);
             InitLyric(txtTitle.Text, LyricReader.LoadLyric());
         }
-        private void PlayNewSong(string music_name)
+        private void PlayNewSong(string param1)
         {
+            string music_name = "", singer = "";
+            mysqlConnector.getCurrentSongs(ref music_name, ref singer, param1, "");
             Music finded_music = musicPath.Find(name => { return name.musicName == music_name; });
-            string singer = finded_music.singer;
             mysqlConnector.AddListeningRecord(music_name, singer);
             txtTitle.Text = singer + " - " + music_name;
             //log.Info(String.Format("Playing song {0} by {1}...", music_name, singer));
@@ -167,8 +206,10 @@ namespace Dancer_android
             LyricReader.Init(finded_music.fileName, finded_music.belongToList, musicRootPath);
             InitLyric(txtTitle.Text, LyricReader.LoadLyric());
         }
-        private void PlayNewSong(string music_name, string singer)
+        private void PlayNewSong(string param1, string param2)
         {
+            string music_name = "", singer = "";
+            mysqlConnector.getCurrentSongs(ref music_name, ref singer, param1, param2);
             mysqlConnector.AddListeningRecord(music_name, singer);
             Music finded_music = musicPath.Find(name => { return name.musicName == music_name && name.singer == singer; });
             txtTitle.Text = singer + " - " + music_name;
@@ -192,7 +233,8 @@ namespace Dancer_android
                 for (int i = 0; i < 4; i++) txtLyrics[i + 5].Text = lyric[i].lyric_content;
                 curLine = 0;
             }
-            else lyric.Clear();
+            else if (lyric != null) lyric.Clear();
+            else lyric = new List<Lyric>();
             StartUpdateLyric(10, () => player.CurrentPosition < player.Duration - 1, new Handler(Looper.MainLooper));
         }
         private void StartUpdateLyric(long totalMilliseconds, Func<bool> callback, Handler refreshLyric)
@@ -274,9 +316,9 @@ namespace Dancer_android
         }
 
         private bool directClose = false;
-        private void BtnMenu_Click(object sender, System.EventArgs e)
+        
+        private void ExitButton_Click(object sender, EventArgs e)
         {
-            //throw new System.NotImplementedException();
             if (directClose)
             {
                 player.Stop();
@@ -285,7 +327,40 @@ namespace Dancer_android
             else
             {
                 directClose = true;
-                txtLyrics[3].Text = "播放结束时退出";
+                exitButton.Text = "播放结束时退出";
+            }
+            //throw new NotImplementedException();
+        }
+        
+        private void SearchEditBox_AfterTextChanged(object sender, Android.Text.AfterTextChangedEventArgs e)
+        {
+            searchButton.Text = "...";
+            //throw new NotImplementedException();
+        }
+
+        private void SearchButton_Click(object sender, EventArgs e)
+        {
+            if (CheckSong(searchEditBox.Text) >= 0)
+            {
+                searchButton.Text = "〇";
+            }
+            else searchButton.Text = "╳";
+            //throw new NotImplementedException();
+        }
+        private void BtnMenu_Click(object sender, System.EventArgs e)
+        {
+            //throw new System.NotImplementedException();
+            if (searchBox.Visibility == ViewStates.Gone)
+            {
+                exitBox.Visibility = ViewStates.Visible;
+                searchBox.Visibility = ViewStates.Visible;
+                for (int i = 6; i < 9; i++) txtLyrics[i].Visibility = ViewStates.Gone;
+            }
+            else
+            { 
+                exitBox.Visibility = ViewStates.Gone;
+                searchBox.Visibility = ViewStates.Gone;
+                for (int i = 6; i < 9; i++) txtLyrics[i].Visibility = ViewStates.Visible;
             }
         }
 

@@ -81,14 +81,20 @@ namespace Dancer_android
 		public partial class Id
 		{
 			
+			// aapt resource value: 0x7f050013
+			public const int btnMenu = 2131034131;
+			
+			// aapt resource value: 0x7f050011
+			public const int btnMode = 2131034129;
+			
+			// aapt resource value: 0x7f050012
+			public const int btnPlay = 2131034130;
+			
 			// aapt resource value: 0x7f05000d
-			public const int btnMenu = 2131034125;
+			public const int exitBox = 2131034125;
 			
-			// aapt resource value: 0x7f05000b
-			public const int btnMode = 2131034123;
-			
-			// aapt resource value: 0x7f05000c
-			public const int btnPlay = 2131034124;
+			// aapt resource value: 0x7f05000e
+			public const int exitButton = 2131034126;
 			
 			// aapt resource value: 0x7f050000
 			public const int lyricLine1 = 2131034112;
@@ -117,11 +123,23 @@ namespace Dancer_android
 			// aapt resource value: 0x7f050008
 			public const int lyricLine9 = 2131034120;
 			
+			// aapt resource value: 0x7f05000f
+			public const int musicTitle = 2131034127;
+			
+			// aapt resource value: 0x7f050010
+			public const int playProgress = 2131034128;
+			
 			// aapt resource value: 0x7f050009
-			public const int musicTitle = 2131034121;
+			public const int searchBox = 2131034121;
+			
+			// aapt resource value: 0x7f05000c
+			public const int searchButton = 2131034124;
+			
+			// aapt resource value: 0x7f05000b
+			public const int searchEditBox = 2131034123;
 			
 			// aapt resource value: 0x7f05000a
-			public const int playProgress = 2131034122;
+			public const int searchInputBox = 2131034122;
 			
 			static Id()
 			{
@@ -158,8 +176,17 @@ namespace Dancer_android
 			// aapt resource value: 0x7f040002
 			public const int default_lyric = 2130968578;
 			
+			// aapt resource value: 0x7f040005
+			public const int exit = 2130968581;
+			
 			// aapt resource value: 0x7f040001
 			public const int music_root_path = 2130968577;
+			
+			// aapt resource value: 0x7f040004
+			public const int search = 2130968580;
+			
+			// aapt resource value: 0x7f040003
+			public const int search_box = 2130968579;
 			
 			static String()
 			{

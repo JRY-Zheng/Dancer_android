@@ -21,9 +21,11 @@ public final class R {
         public static final int random=0x7f020007;
     }
     public static final class id {
-        public static final int btnMenu=0x7f05000d;
-        public static final int btnMode=0x7f05000b;
-        public static final int btnPlay=0x7f05000c;
+        public static final int btnMenu=0x7f050013;
+        public static final int btnMode=0x7f050011;
+        public static final int btnPlay=0x7f050012;
+        public static final int exitBox=0x7f05000d;
+        public static final int exitButton=0x7f05000e;
         public static final int lyricLine1=0x7f050000;
         public static final int lyricLine2=0x7f050001;
         public static final int lyricLine3=0x7f050002;
@@ -33,8 +35,12 @@ public final class R {
         public static final int lyricLine7=0x7f050006;
         public static final int lyricLine8=0x7f050007;
         public static final int lyricLine9=0x7f050008;
-        public static final int musicTitle=0x7f050009;
-        public static final int playProgress=0x7f05000a;
+        public static final int musicTitle=0x7f05000f;
+        public static final int playProgress=0x7f050010;
+        public static final int searchBox=0x7f050009;
+        public static final int searchButton=0x7f05000c;
+        public static final int searchEditBox=0x7f05000b;
+        public static final int searchInputBox=0x7f05000a;
     }
     public static final class layout {
         public static final int main=0x7f030000;
@@ -42,6 +48,9 @@ public final class R {
     public static final class string {
         public static final int app_name=0x7f040000;
         public static final int default_lyric=0x7f040002;
+        public static final int exit=0x7f040005;
         public static final int music_root_path=0x7f040001;
+        public static final int search=0x7f040004;
+        public static final int search_box=0x7f040003;
     }
 }
