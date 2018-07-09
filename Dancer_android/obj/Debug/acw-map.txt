@@ -2,3 +2,11 @@ Dancer_android.MainActivity, Dancer_android;md589bb091cbdc3e71bd101211b9f1acdaf.
 Dancer_android.MainActivity, Dancer_android, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null;md589bb091cbdc3e71bd101211b9f1acdaf.MainActivity
 Dancer_android.MainActivity;md589bb091cbdc3e71bd101211b9f1acdaf.MainActivity
 dancer_android.MainActivity;md589bb091cbdc3e71bd101211b9f1acdaf.MainActivity
+Dancer_android.MusicPlayerService, Dancer_android;com.zhengjry.Dancer.MusicPlayerService
+Dancer_android.MusicPlayerService, Dancer_android, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null;com.zhengjry.Dancer.MusicPlayerService
+Dancer_android.MusicPlayerService;com.zhengjry.Dancer.MusicPlayerService
+com.zhengjry.Dancer.MusicPlayerService;com.zhengjry.Dancer.MusicPlayerService
+Dancer_android.MusicPlayerService/MusicController, Dancer_android;com.zhengjry.Dancer.MusicPlayerService_MusicController
+Dancer_android.MusicPlayerService+MusicController, Dancer_android, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null;com.zhengjry.Dancer.MusicPlayerService_MusicController
+Dancer_android.MusicPlayerService.MusicController;com.zhengjry.Dancer.MusicPlayerService_MusicController
+com.zhengjry.Dancer.MusicPlayerService_MusicController;com.zhengjry.Dancer.MusicPlayerService_MusicController

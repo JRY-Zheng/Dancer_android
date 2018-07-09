@@ -14,7 +14,7 @@ using Android.Content;
 namespace Dancer_android
 {
     [Activity(Label = "Dancer", MainLauncher = true)]
-    public class MainActivity : Activity
+    public class MainActivity : Activity, IServiceConnection
     {
         public string cur_music_name, cur_singer;
         private LinearLayout searchBox, exitBox;
@@ -22,7 +22,9 @@ namespace Dancer_android
         private Button searchButton, exitButton;
         private ImageButton btnPlay, btnMenu, btnMode;
         private TextView txtTitle;
-        private MediaPlayer player;
+        //private MediaPlayer player;
+        private MusicPlayerService playerService;
+        private MusicPlayerService.MusicController player;
         private string musicRootPath; private struct Music
         {
             public string musicPath, musicName, fileName, singer, album, belongToList, otherSinger;
@@ -53,7 +55,8 @@ namespace Dancer_android
         private ProgressBar playProgress;
         private int curLine = 0;
         private bool curMode = true;  // true means random
-        private static PowerManager.WakeLock wakeLock;  
+        private static PowerManager.WakeLock wakeLock;
+        private Intent intent;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -88,9 +91,10 @@ namespace Dancer_android
             txtLyrics[6] = FindViewById<TextView>(Resource.Id.lyricLine7);
             txtLyrics[7] = FindViewById<TextView>(Resource.Id.lyricLine8);
             txtLyrics[8] = FindViewById<TextView>(Resource.Id.lyricLine9);
-            player = new MediaPlayer();
-            player.Completion += Player_Completion;
-            PlayNewSong();
+            //player = new MediaPlayer();
+            intent = new Intent(this, typeof(MusicPlayerService));
+            StartService(intent);
+            BindService(intent, this, Bind.AutoCreate);// BIND_AUTO_CREATE);
         }
         
         private void InitMysql(ref MysqlConnector m)
@@ -128,41 +132,6 @@ namespace Dancer_android
                 cycleSinger = "";
                 return 1;
             };
-            //string music_name, singer;
-            //Match match = Regex.Match(songInfo, @"^(.+?)(\s(.+))?$");
-            //if (match.Success)
-            //{
-            //    music_name = match.Groups[1].ToString();
-            //    if (match.Groups.Count > 3 && match.Groups[3].ToString() != "")
-            //    {
-            //        singer = match.Groups[3].ToString();
-            //        List<Music> find_music_list = musicPath.FindAll(name => { return name.musicName == music_name && name.singer == singer; });
-            //        if (find_music_list.ToArray().Length == 0) return -1;
-            //        else
-            //        {
-            //            cycleMusicName = music_name;
-            //            cycleSinger = singer;
-            //        }
-            //    }
-            //    else
-            //    {
-            //        List<Music> find_music_list = musicPath.FindAll(name => { return name.musicName == music_name; });
-            //        if (find_music_list.ToArray().Length == 0) return -1;
-            //        else
-            //        {
-            //            cycleMusicName = music_name;
-            //            cycleSinger = "";
-            //        }
-            //    }
-            //}
-            //else
-            //{
-            //    cycleSinger = "";
-            //    cycleMusicName = "";
-            //    if (songInfo == "") return 1;
-            //    else return -1;
-            //}
-            return 0;
         }
         //自动播放下一曲
         private void Player_Completion(object sender, System.EventArgs e)
@@ -170,6 +139,7 @@ namespace Dancer_android
             //throw new System.NotImplementedException();
             if (directClose)
             {
+                StopService(intent);
                 this.Finish();
                 return;
             }
@@ -284,11 +254,13 @@ namespace Dancer_android
                     {
                         Match match = match_nc.Success ? match_nc : match_xm;
                         int nc_or_xm = match_nc.Success ? 2 : 1;
-                        Music music = new Music();
-                        music.musicPath = NextFile.Path;
-                        music.musicName = match.Groups[nc_or_xm].ToString();
-                        music.fileName = System.IO.Path.GetFileNameWithoutExtension(NextFile.Name);
-                        music.belongToList = NextFolder.Name;
+                        Music music = new Music
+                        {
+                            musicPath = NextFile.Path,
+                            musicName = match.Groups[nc_or_xm].ToString(),
+                            fileName = System.IO.Path.GetFileNameWithoutExtension(NextFile.Name),
+                            belongToList = NextFolder.Name
+                        };
                         Match singer_match = Regex.Match(match.Groups[3 - nc_or_xm].ToString(), @"(.*?)(、|&|\s|,)(.*)");
                         if (singer_match.Success)
                         {
@@ -322,6 +294,7 @@ namespace Dancer_android
             if (directClose)
             {
                 player.Stop();
+                StopService(intent);
                 this.Finish();
             }
             else
@@ -347,20 +320,29 @@ namespace Dancer_android
             else searchButton.Text = "╳";
             //throw new NotImplementedException();
         }
+
+        private void MenuShow()
+        {
+            exitBox.Visibility = ViewStates.Visible;
+            searchBox.Visibility = ViewStates.Visible;
+            for (int i = 6; i < 9; i++) txtLyrics[i].Visibility = ViewStates.Gone;
+        }
+        private void MenuHide()
+        {
+            exitBox.Visibility = ViewStates.Gone;
+            searchBox.Visibility = ViewStates.Gone;
+            for (int i = 6; i < 9; i++) txtLyrics[i].Visibility = ViewStates.Visible;
+        }
         private void BtnMenu_Click(object sender, System.EventArgs e)
         {
             //throw new System.NotImplementedException();
             if (searchBox.Visibility == ViewStates.Gone)
             {
-                exitBox.Visibility = ViewStates.Visible;
-                searchBox.Visibility = ViewStates.Visible;
-                for (int i = 6; i < 9; i++) txtLyrics[i].Visibility = ViewStates.Gone;
+                MenuShow();
             }
             else
-            { 
-                exitBox.Visibility = ViewStates.Gone;
-                searchBox.Visibility = ViewStates.Gone;
-                for (int i = 6; i < 9; i++) txtLyrics[i].Visibility = ViewStates.Visible;
+            {
+                MenuHide();
             }
         }
 
@@ -399,11 +381,26 @@ namespace Dancer_android
         {
             if (keyCode == Keycode.Back)
             {
-                MoveTaskToBack(false);
+                if (searchBox.Visibility == ViewStates.Visible)
+                    MenuHide();
+                else MoveTaskToBack(false);
                 return true;
             }
             return base.OnKeyDown(keyCode, e);
         }
+
+        public void OnServiceConnected(ComponentName name, IBinder service)
+        {
+            player = (MusicPlayerService.MusicController)service;
+            player.Completion += Player_Completion;
+            PlayNewSong();
+        }
+
+        public void OnServiceDisconnected(ComponentName name)
+        {
+            player = null;
+        }
     }
+
 }
 

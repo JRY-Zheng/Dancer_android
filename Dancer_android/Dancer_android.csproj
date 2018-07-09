@@ -65,7 +65,8 @@
     <Compile Include="LyricReader.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="MysqlConnector.cs" />
-    <Compile Include="Resources\Resource.Designer.cs" />
+    <Compile Include="MusicPlayerService.cs" />
+    <Compile Include="Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
